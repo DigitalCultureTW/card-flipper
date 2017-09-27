@@ -3,13 +3,8 @@ const WT = window.screen.availWidth - 10, HT = window.screen.availHeight;
 const SIDE = (WT / COLUMN > HT / ROW) ? HT / ROW - CARD_BORDER * 2 : WT / COLUMN - CARD_BORDER * 2;
 const FILL_COLOR = 'rgb(55,55,55)';
 
-
 $(function () {
-    var img_pool, txt_pool;
-    $.getScript("./data/data.js", () => {
-        img_pool = IMG_POOL;
-        txt_pool = TXT_POOL;
-    });
+//    var IMG_POOL = IMG_POOL, TXT_POOL = TXT_POOL;
     var cards = [];
     $.getScript("./js/libs/Card.js", () => {
         for (i = 0; i < ROW; i++) {
@@ -18,8 +13,8 @@ $(function () {
             $(row).addClass("row");
             $("body").append(row);
             for (j = 0; j < COLUMN; j++) {
-                var index = parseInt(img_pool.length * Math.random());
-                cards[i][j] = new Card(i + "_" + j, img_pool[index]);
+                var index = parseInt(IMG_POOL.length * Math.random());
+                cards[i][j] = new Card(i + "_" + j, IMG_POOL[index]);
                 var card = document.createElement("div");
                 $(card).addClass('card viewport-flip left');
                 $(card).attr("id", cards[i][j].id);
@@ -50,7 +45,6 @@ $(function () {
     });
     $(".card").css({width: SIDE, height: SIDE, border: CARD_BORDER + "px solid #aaaaaa"});
 
-
     $.getScript("./js/libs/card_flip.js", function () {
         $(".card").bind("click", function () {
             console.log(this.id);
@@ -59,17 +53,17 @@ $(function () {
             var card = cards[i][j];
             var img_index, txt_index;
             do {
-                img_index = parseInt(img_pool.length * Math.random());
+                img_index = parseInt(IMG_POOL.length * Math.random());
 //                console.log(cards[i][j].next_img, img_pool[index]);
-            } while (card.next_img === img_pool[img_index]);
-            if (Math.random() > 0.7) {
-                txt_index = parseInt(txt_pool.length * Math.random());
-                draw_text(SIDE, txt_pool[txt_index], FILL_COLOR, (txt) => {
+            } while (card.next_img === IMG_POOL[img_index]);
+            if (Math.random() > 0.6) {
+                txt_index = parseInt(TXT_POOL.length * Math.random());
+                draw_text(SIDE, TXT_POOL[txt_index], FILL_COLOR, (txt) => {
                     card.set_next(txt);
                     flip(card, SIDE, FILL_COLOR);
                 });
             } else {
-                card.set_next(img_pool[img_index]);
+                card.set_next(IMG_POOL[img_index]);
                 flip(card, SIDE, FILL_COLOR);
             }
         });
