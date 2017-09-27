@@ -71,5 +71,5 @@ body{
 }
 .row {
     margin:auto;
-    display:block;
+    position:relative;
 }

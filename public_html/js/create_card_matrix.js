@@ -1,10 +1,16 @@
+/* global IMG_POOL, TXT_POOL */
+
 const COLUMN = 4, ROW = 3, CARD_BORDER = 7;
 const WT = window.screen.availWidth - 10, HT = window.screen.availHeight;
 const SIDE = (WT / COLUMN > HT / ROW) ? HT / ROW - CARD_BORDER * 2 : WT / COLUMN - CARD_BORDER * 2;
-const FILL_COLOR = 'rgb(55,55,55)';
+const FILL_COLOR = 'rgb(55,55,55)', BORDER_COLOR = '#cecece';
 
 $(function () {
-//    var IMG_POOL = IMG_POOL, TXT_POOL = TXT_POOL;
+    var img_pool, txt_pool;
+//    $.getScript("./data/data.js", () => {
+    img_pool = IMG_POOL;
+    txt_pool = TXT_POOL;
+//    });
     var cards = [];
     $.getScript("./js/libs/Card.js", () => {
         for (i = 0; i < ROW; i++) {
@@ -13,22 +19,29 @@ $(function () {
             $(row).addClass("row");
             $("body").append(row);
             for (j = 0; j < COLUMN; j++) {
-                var index = parseInt(IMG_POOL.length * Math.random());
-                cards[i][j] = new Card(i + "_" + j, IMG_POOL[index]);
+                var index = parseInt(img_pool.length * Math.random());
+                cards[i][j] = new Card(i + "_" + j, img_pool[index]);
                 var card = document.createElement("div");
                 $(card).addClass('card viewport-flip left');
                 $(card).attr("id", cards[i][j].id);
                 $(row).append(card);
             }
         }
-        $(".card").css({width: SIDE, height: SIDE, border: CARD_BORDER + "px inset #cecece"});
+        $(".card").css({
+            width: SIDE,
+            height: SIDE,
+            border: CARD_BORDER + "px inset " + BORDER_COLOR});
         $(".row").css({
             height: SIDE + CARD_BORDER * 2,
-            width: (SIDE + CARD_BORDER * 2) * COLUMN,
-//            "margin-left": "auto",
-//            "margin-right": "auto",
-            margin: "auto",
-            display: "block"});
+            width: (SIDE + CARD_BORDER * 2) * COLUMN
+        });
+        var top_box = document.createElement("div");
+        $(top_box).css({
+            height: (HT - (SIDE + CARD_BORDER * 2) * ROW) / 2,
+            width: (SIDE + CARD_BORDER * 2) * COLUMN
+        });
+        $("body").prepend(top_box);
+
     });
     // initialize cards
     $.getScript("./js/libs/create_card.js", function () {
@@ -53,17 +66,17 @@ $(function () {
             var card = cards[i][j];
             var img_index, txt_index;
             do {
-                img_index = parseInt(IMG_POOL.length * Math.random());
+                img_index = parseInt(img_pool.length * Math.random());
 //                console.log(cards[i][j].next_img, img_pool[index]);
-            } while (card.next_img === IMG_POOL[img_index]);
+            } while (card.next_img === img_pool[img_index]);
             if (Math.random() > 0.6) {
-                txt_index = parseInt(TXT_POOL.length * Math.random());
-                draw_text(SIDE, TXT_POOL[txt_index], FILL_COLOR, (txt) => {
+                txt_index = parseInt(txt_pool.length * Math.random());
+                draw_text(SIDE, txt_pool[txt_index], FILL_COLOR, (txt) => {
                     card.set_next(txt);
                     flip(card, SIDE, FILL_COLOR);
                 });
             } else {
-                card.set_next(IMG_POOL[img_index]);
+                card.set_next(img_pool[img_index]);
                 flip(card, SIDE, FILL_COLOR);
             }
         });

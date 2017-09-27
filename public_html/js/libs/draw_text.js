@@ -12,13 +12,15 @@ function draw_text(size, text, color, callback) {
     var margin = font_size * 0.8;
     var y = margin + font_size;
     var sub_start = 0;
-    for (i = 0; i < text.length; i++) {
-        var substr = text.substring(sub_start, i + 1);
-        var substr_width = ctx.measureText(substr).width;
+    var textArray = Array.from(text);
+    var substr = '', substr_width = 0;
+    for (i = 0; i < textArray.length; i++) {
+        substr += textArray[i];
+        substr_width = ctx.measureText(substr).width;
 //        console.log(sub_start, i - sub_start + 1, substr_width, substr);
         if (substr_width > size - margin * 3 || i === text.length - 1) {
             ctx.fillText(substr, margin, y);
-            sub_start = i + 1;
+            substr = '';
             y += font_size * 1.2;
             if (y > size - margin)
                 break;
