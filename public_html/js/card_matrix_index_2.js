@@ -1,16 +1,37 @@
 /* global IMG_POOL, TXT_POOL */
 
-const COLUMN = 4, ROW = 3, CARD_BORDER = 7;
+const COLUMN = 12, ROW = 6;
+const CARD_BORDER = 10, BORDER_STYLE = 'inset';
 const WT = window.screen.availWidth - 10, HT = window.screen.availHeight;
-const SIDE = (WT / COLUMN > HT / ROW) ? HT / ROW - CARD_BORDER * 2 : WT / COLUMN - CARD_BORDER * 2;
-const FILL_COLOR = 'rgb(55,55,55)', BORDER_COLOR = '#cecece';
+const SIDE = (WT / COLUMN > HT / ROW) ?
+        HT / ROW * MOD(ROW) - CARD_BORDER * 2 :
+        WT / COLUMN - CARD_BORDER * 2;
+const COLOR = {
+    CARD: '#373737', //rgb(55,55,55)
+    BORDER: ['#cecece', '#3333ff']
+};
+
+var top_box = document.createElement("div");
+$(top_box).css({
+    height: (HT - (SIDE + CARD_BORDER * 2) * ROW) * 0.4,
+    width: (SIDE + CARD_BORDER * 2) * COLUMN
+});
+$("body").prepend(top_box);
+
+function MOD(row) {
+    switch (row) {
+        case 1:
+            return 0.72;
+        case 2:
+            return 0.95;
+    }
+    return 1;
+}
 
 $(function () {
     var img_pool, txt_pool;
-//    $.getScript("./data/data.js", () => {
     img_pool = IMG_POOL;
     txt_pool = TXT_POOL;
-//    });
     var cards = [];
     $.getScript("./js/libs/Card.js", () => {
         for (i = 0; i < ROW; i++) {
@@ -30,17 +51,11 @@ $(function () {
         $(".card").css({
             width: SIDE,
             height: SIDE,
-            border: CARD_BORDER + "px inset " + BORDER_COLOR});
+            border: CARD_BORDER + "px " + BORDER_STYLE + " " + COLOR.BORDER[0]});
         $(".row").css({
             height: SIDE + CARD_BORDER * 2,
             width: (SIDE + CARD_BORDER * 2) * COLUMN
         });
-        var top_box = document.createElement("div");
-        $(top_box).css({
-            height: (HT - (SIDE + CARD_BORDER * 2) * ROW) / 2,
-            width: (SIDE + CARD_BORDER * 2) * COLUMN
-        });
-        $("body").prepend(top_box);
 
     });
     // initialize cards
@@ -48,18 +63,18 @@ $(function () {
         cards.forEach(function (row) {
             row.forEach(function (card) {
                 var id = card.id;
-                create_card(card.img, SIDE, FILL_COLOR, function (c) {
+                create_card(card.img, SIDE, COLOR.CARD, (c) => {
                     $(c).addClass("face front flip in");
                     $("#" + id).append(c);
                 });
             });
         });
-        $(".face").css({width: SIDE, height: SIDE, margin: "auto", display: "block"});
+        $(".face").css({width: SIDE, height: SIDE});
     });
-    $(".card").css({width: SIDE, height: SIDE, border: CARD_BORDER + "px solid #aaaaaa"});
+    $(".card").css({width: SIDE, height: SIDE}); //, border: CARD_BORDER + "px solid #aaaaaa"
 
     $.getScript("./js/libs/card_flip.js", function () {
-        $(".card").bind("click", function () {
+        $(".card").click(function (event) {
             console.log(this.id);
             var card_id = this.id.split("_");
             var i = parseInt(card_id[0]), j = parseInt(card_id[1]);
@@ -69,15 +84,15 @@ $(function () {
                 img_index = parseInt(img_pool.length * Math.random());
 //                console.log(cards[i][j].next_img, img_pool[index]);
             } while (card.next_img === img_pool[img_index]);
-            if (Math.random() > 0.6) {
+            if (Math.random() > 0.5) {
                 txt_index = parseInt(txt_pool.length * Math.random());
-                draw_text(SIDE, txt_pool[txt_index], FILL_COLOR, (txt) => {
+                draw_text(SIDE, txt_pool[txt_index], COLOR.CARD, (txt) => {
                     card.set_next(txt);
-                    flip(card, SIDE, FILL_COLOR);
+                    flip(card, SIDE, COLOR.CARD, CARD_BORDER, BORDER_STYLE, COLOR.BORDER[1]);
                 });
             } else {
                 card.set_next(img_pool[img_index]);
-                flip(card, SIDE, FILL_COLOR);
+                flip(card, SIDE, COLOR.CARD, CARD_BORDER, BORDER_STYLE, COLOR.BORDER[0]);
             }
         });
     }

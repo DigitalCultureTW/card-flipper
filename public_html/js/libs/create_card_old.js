@@ -6,13 +6,13 @@
  * @param {function(card)} callback function to process the card.
  * @returns {undefined}
  */
-function create_card(img_path, side, color, callback) {
+function create_card_old(img_path, side, color, callback) {
     var img = new Image();
     img.crossOrigin = "anonymous";
     img.src = img_path;
 
     var card = document.createElement("div");
-    $(card).css({width: side, height: side, "background": color});
+    $(card).css({width: side, height: side, "background": "#111111"});
     $(card).addClass("card");
 
     img.onload = function () {
